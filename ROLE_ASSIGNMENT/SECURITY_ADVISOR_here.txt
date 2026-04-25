@@ -1,0 +1,292 @@
+===========================================================
+CAMPUS WARI - AUTHENTICATION & SECURITY ROLE
+===========================================================
+Assigned to: [name-here]
+
+WHAT YOU OWN:
+  - Design the signup and login flow
+  - Implement password hashing and verification
+  - Implement JWT token creation and validation
+  - Protect routes so only authenticated users access them
+  - Think through failure scenarios (lost password, token expiry, etc.)
+  - Advise the team on security best practices
+
+TOOLS:
+  - Python JWT module (PyJWT or python-jose)
+  - bcrypt or passlib (for password hashing)
+  - FastAPI dependency injection (for protected routes)
+  - Free to explore other tools
+
+===========================================================
+MINDSET: SECURITY IS A MINDSET, NOT A FEATURE
+===========================================================
+Your role is different from the others.
+Backend builds features. Frontend builds interfaces.
+You build TRUST.
+
+You ask the uncomfortable questions:
+  - What if someone steals a token?
+  - What if someone brute-forces passwords?
+  - What if a user loses access to their email?
+  - What data should User A NEVER see about User B?
+
+"Everything is a compromise when user is server."
+Security vs convenience is a sliding scale.
+Your job is to find the right point on that scale
+for a campus platform where trust is already higher
+(because everyone shares a physical space).
+
+===========================================================
+PHASE 1: UNDERSTAND THE AUTH FLOW
+===========================================================
+
+STEP 1.1 - The Signup Flow
+  1. User sends email + name + password to /auth/signup
+  2. Server checks: is email already registered?
+  3. Server checks: is password strong enough? (minimum length, etc.)
+  4. Server hashes the password (NEVER stored as plain text)
+  5. Server stores user in database with the HASH
+  6. Server returns success (optionally, auto-login with token)
+
+  Question you must answer:
+    - Do we verify college email? (send verification link? check domain?)
+    - What password rules do we enforce?
+
+STEP 1.2 - The Login Flow
+  1. User sends email + password to /auth/login
+  2. Server finds user by email in database
+  3. Server compares provided password with stored hash
+  4. If match: server creates a JWT token with user ID and expiry
+  5. Server returns the token to the frontend
+  6. Frontend stores the token (localStorage or httpOnly cookie)
+  7. Frontend sends the token with every subsequent request
+
+  Questions you must answer:
+    - How long should a token last? (15 minutes? 1 hour? 1 day?)
+    - Where does the frontend store the token?
+    - What happens when the token expires?
+
+STEP 1.3 - The Protected Route Flow
+  1. User requests /users/me or /listings/create
+  2. Frontend includes token in Authorization header:
+       Authorization: Bearer <token>
+  3. Backend middleware extracts and verifies the token
+  4. If valid: request proceeds with user identity known
+  5. If invalid/expired: return 401 Unauthorized
+
+===========================================================
+PHASE 2: SECURITY MODELING - THINK LIKE AN ATTACKER
+===========================================================
+
+STEP 2.1 - Threat Scenarios To Consider
+
+  Scenario A: Token Theft
+    Someone copies a user's JWT token.
+    Can they impersonate that user forever?
+    -> Mitigation: Short token expiry. Refresh tokens.
+
+  Scenario B: Brute Force
+    Someone tries thousands of password combinations.
+    Can they guess a weak password?
+    -> Mitigation: Rate limiting. Minimum password strength.
+
+  Scenario C: Password Leak
+    The database is somehow exposed.
+    Are user passwords readable?
+    -> Mitigation: Passwords are HASHED. Hashing is one-way.
+
+  Scenario D: Lost Password
+    A genuine user forgets their password.
+    Are they locked out forever?
+    -> Mitigation: Password reset flow (email-based).
+
+  Scenario E: Unauthorized Access
+    User A tries to view User B's private messages.
+    Can they?
+    -> Mitigation: Every endpoint checks ownership.
+
+STEP 2.2 - Design Your Contingency Plan
+
+  For each scenario above, write down:
+    - What's the worst that could happen?
+    - How do we prevent it?
+    - If prevention fails, how do we detect it?
+    - If detection happens, how do we recover?
+
+  Example for "Lost Password":
+    Worst case: User locked out permanently.
+    Prevention: Have a password reset flow from day one.
+    Detection: User reports it (or we see failed login spikes).
+    Recovery: Reset link sent to registered email. New password set.
+
+===========================================================
+PHASE 3: IMPLEMENTATION PLAN
+===========================================================
+
+CHECKPOINT 1 - Password Hashing Utility
+  Write a utility function (or understand the library) that:
+    - Takes a plain text password
+    - Returns a hash (with built-in salt)
+    - Can later verify: does this plain text match this hash?
+
+  This is TWO functions: hash_password() and verify_password()
+
+CHECKPOINT 2 - JWT Token Utility
+  Write utility functions that:
+    - Create a token with user ID and expiry time
+    - Verify a token and extract the user ID
+    - Handle expired tokens gracefully
+
+  This is TWO functions: create_access_token() and decode_token()
+
+CHECKPOINT 3 - Signup Endpoint Integration
+  Work with Backend person so /auth/signup:
+    - Uses YOUR hash_password() function
+    - Stores the hash, never the plain text
+    - Returns appropriate success/error
+
+CHECKPOINT 4 - Login Endpoint Integration
+  Work with Backend person so /auth/login:
+    - Uses YOUR verify_password() function
+    - Uses YOUR create_access_token() function
+    - Returns the token with user info
+
+CHECKPOINT 5 - Protected Route Middleware
+  Create a dependency that Backend can use on any route:
+    from utils.auth import get_current_user
+
+    @router.get("/users/me")
+    def get_me(current_user = Depends(get_current_user)):
+        return current_user
+
+  This middleware:
+    - Extracts token from Authorization header
+    - Decodes and verifies it
+    - Fetches the user from database
+    - Returns the user object (or raises 401)
+
+CHECKPOINT 6 - Password Reset Flow (Phase 2 feature)
+  Design (and later implement):
+    - "Forgot password?" link on login page
+    - User enters email
+    - If email exists, send reset link (with expiring token)
+    - User clicks link, enters new password
+    - Password is hashed and updated
+
+===========================================================
+AI PROMPTS FOR LEARNING WHILE BUILDING
+===========================================================
+
+PROMPT 1: Understanding Hashing
+  "Explain password hashing to me in simple terms. What's the
+  difference between encryption and hashing? Why is hashing
+  better for passwords? What is a salt and why does it matter?
+  How does bcrypt work? I want to understand the concepts before
+  I implement anything."
+
+PROMPT 2: Understanding JWT
+  "I need to implement JWT authentication for a student project.
+  Explain what a JSON Web Token actually is. What are the three
+  parts (header, payload, signature)? How is it created? How is
+  it verified? What does 'stateless authentication' mean?
+  Use simple language and analogies."
+
+PROMPT 3: Token Storage Debate
+  "My team is building a web app and we're debating where to store
+  the JWT token on the frontend. Compare localStorage vs httpOnly
+  cookies vs sessionStorage. What are the security tradeoffs of
+  each? What would you recommend for a campus platform where
+  the risk level is moderate?"
+
+PROMPT 4: Designing Auth Flow
+  "Walk me through designing a complete authentication flow for
+  a student platform. We need signup, login, protected routes,
+  and password reset. Help me think through:
+  - What endpoints do we need?
+  - What does each endpoint accept and return?
+  - Where do security checks happen?
+  - What edge cases should I plan for?
+  Don't write code. Help me think through the design."
+
+PROMPT 5: Common Security Mistakes
+  "I'm new to implementing authentication. What are the most
+  common security mistakes beginners make when building auth
+  systems? What should I absolutely NOT do? What are the
+  minimum security practices every project should follow?"
+
+PROMPT 6: Rate Limiting
+  "We want to prevent brute force attacks on our login endpoint.
+  Explain rate limiting to me. How does it work? What's a good
+  starting rate limit for a small campus platform? How would I
+  implement it in FastAPI?"
+
+PROMPT 7: Password Reset Security
+  "We need to implement a 'forgot password' flow. What are the
+  security considerations? How do we make sure the reset link
+  isn't abused? How long should reset tokens last? Should we
+  notify the user if their email was used in a reset attempt?"
+
+PROMPT 8: Code Review for Security
+  "Here is my authentication implementation. Can you review it
+  specifically for security issues? Look for:
+  - Password handling problems
+  - Token vulnerabilities
+  - Missing checks
+  - Anything an attacker could exploit
+  [paste your code]"
+
+===========================================================
+YOUR DELIVERABLES TO THE TEAM
+===========================================================
+
+By end of Week 1:
+  [ ] Hashing utility (hash_password, verify_password) working
+  [ ] JWT utility (create_access_token, decode_token) working
+  [ ] Signup endpoint integrated and storing hashed passwords
+  [ ] Login endpoint integrated and returning valid tokens
+  [ ] At least one protected route working
+
+By end of Week 2:
+  [ ] All sensitive routes protected with get_current_user
+  [ ] Token expiry handled gracefully (frontend knows what 401 means)
+  [ ] Threat model document shared with team
+  [ ] Password reset flow designed (implementation can follow)
+
+Ongoing:
+  [ ] Security concerns raised early in feature planning
+  [ ] Team notified of any security best practices to follow
+
+===========================================================
+TIPS FROM SOMEONE WHO'S DONE THIS
+===========================================================
+
+1. NEVER ROLL YOUR OWN CRYPTO
+   Use well-tested libraries: bcrypt for hashing, PyJWT for tokens.
+   Never write your own hashing algorithm. Just don't.
+
+2. TOKEN EXPIRY IS YOUR FRIEND
+   A token that lasts forever is a stolen token that works forever.
+   Start with 30-minute expiry. You can always extend it later.
+
+3. THE FRONTEND NEEDS TO HANDLE 401
+   When a token expires, the API returns 401.
+   The frontend should catch this and redirect to login.
+   Coordinate this with the Frontend person.
+
+4. BE PARANOID, BUT PRACTICAL
+   Yes, httpOnly cookies are more secure than localStorage.
+   But for a campus platform? localStorage with good expiry is fine.
+   Don't let perfect be the enemy of shipped.
+
+5. DOCUMENT YOUR SECURITY DECISIONS
+   Write down: "We chose 30-min token expiry because X."
+   Future you (and future teammates) will thank you.
+
+6. WORK WITH BACKEND, NOT AGAINST THEM
+   You provide the utility functions.
+   Backend calls them in the endpoints.
+   This separation keeps things clean and testable.
+
+===========================================================
+END OF AUTH/SECURITY ROLE DOCUMENT
+===========================================================

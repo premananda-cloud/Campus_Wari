@@ -1,0 +1,86 @@
+#Role need not limit you from learning .
+ROLE : [Backend, Database, Auth, Frontend]
+1. Database : Create database and store environment variable in .env
+- makse schema and retrieval for user data. make logic to give relational data meaning and ensure usefulness to
+project.
+Tool :: DBMS to be used posgres, can start from simpler for prototyping and ideation, validation etc.
+
+2. Backend : Backend needs to understand the database schema write code to collect store and retrieve data from database.
+- develop code logic to handle request and user input and give meaningful processed  output. connect user
+Tool :: python fastapi, or php free to explore
+
+3. Authentication : implement verification and secure account ownership work with integration with backend for integration logic
+Tool :: jwt pyhton module.and free to explore other tool
+
+4. Design and implement user interface and UX to handle client request complain and genereal usage of the app.
+Tool : HTML/CSS Javascript, React, free to explore
+
+
+Database : [name-name-here]
+
+How to start -- | you will need to
+1. install posgresql and set it up with
+- logging in as admin set up a user(you) grant superuser privilegde.
+you will do this using ssql terminal. (querry posgres login -help)
+- logout and login as the created suee and make databse
+  you wil need to save credentials {-U Username ,-d atabase-name,-h Hostname ,password }
+E.g psql -U premananda -d premananda_databse -h localhost -W
+"-W will make prompt for password"
+
+# Theere are two main ways to acess psgres database.
+a. psql terminal it is posgres official terminal you can login with linux command and then use SQL.
+b. python modeule "psycopg" various verson are available to pick.
+python method is more dynamic and better workflow i reccomend this.
+you can defince schema in ".sql" file and refer it usign psycopg.
+
+2. after setting up you will need to define make dos
+docs include "'.env', schema" -- this is so backed can easyly get the idea of sschema and suse daatbase
+query --  "what is .env how to make and store database environment --postgres"
+
+
+Backend : [name-here]
+How to start --
+You will need to understand database schema, and understand postgres.
+It is reccomended to work close ly with database handler, or do both. since it is related.
+you will need to manage the app logic the fastapi app and the internal code.
+Here is a path i recommend --
+1. develope a flowchart andd list of what we want to accomplish, define input and output.
+develop python prototype. then make it cleaner adn integrate fastapi routing to the modules.
+2. Understanding directory and project structure is paramount, more than code it is the architecture and
+flow of data that needs craftmanship.
+-- typical look like this
+
+~/project_root
+|
+|____src # Likely where all the source live.
+|     |__ .__init__
+|     |_____modeule 1
+|           |____ .init
+|           |____ code.py
+|_____config
+|_____UI
+
+.init is python file we use to make a module python module we can call
+AUTH : [name-here]
+Your role is less coding more of security modeling and understading what could get wrong and
+make way to prevent and contengency for failure.
+You will need ground implementation like jwt python module and security theory.
+
+Define How and what client will use to registeer and Login, what happens password is lost.
+--can they make new one or or locked out forever.
+Practivality meets security modeling. Everything is a compromise when user is server. but you must choose awaht can be and canmot be seen changed or made.
+
+# FONTEND : [--name-here]
+Your role is to make interface for user and send data to api.
+Focus on beautiful and seamless skeletom managable. and work on drawing out the project philosophy and goal.
+
+How to start --
+You will need to know HTML/CSS Javascript and REACT.
+1. Define interfaces and make html pages, its fine if it dud.
+You make Page for home , register and login. post and more, and neeeded can be added.
+Make it beautifull with CSS. the add js to handle file retrieval and responsiveness.
+
+2. You will need to understand api that backend will push out.
+you will call it via js apps. and connect to htmal page to make function proper.
+
+# end of doc

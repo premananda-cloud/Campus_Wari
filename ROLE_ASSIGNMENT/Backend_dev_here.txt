@@ -1,0 +1,254 @@
+===========================================================
+CAMPUS WARI - BACKEND ROLE
+===========================================================
+Assigned to: [name-here]
+
+WHAT YOU OWN:
+  - Understand the database schema deeply
+  - Write all logic to collect, store, and retrieve data
+  - Handle user requests and return meaningful responses
+  - Build the FastAPI application and its routing
+  - Connect the frontend to the database through your API
+
+TOOLS:
+  - Python FastAPI (primary recommendation)
+  - psycopg2 or psycopg (for database connection)
+  - Pydantic (for data validation, built into FastAPI)
+  - uvicorn (to run the FastAPI server)
+
+===========================================================
+MINDSET: WORK CLOSELY WITH DATABASE PERSON
+===========================================================
+You and the Database person are two halves of one system.
+  - They define WHAT data lives where
+  - You define HOW data moves and transforms
+  - Sit together. Draw together. Break things together.
+  - If you can, learn both sides. It will make you a better engineer.
+
+===========================================================
+PHASE 1: PLAN BEFORE YOU CODE
+===========================================================
+
+STEP 1.1 - List Everything The App Must Do
+  Write answers to these questions:
+  - What can a user do? (sign up, log in, post a listing, browse, message)
+  - What data comes IN for each action? (email, password, listing title...)
+  - What data goes OUT for each action? (success message, JWT token, list of listings...)
+
+STEP 1.2 - Draw A Flowchart (pen and paper is fine)
+  For EACH action, trace the path:
+    User/Browser -> Frontend -> YOUR API -> Database -> YOUR API -> Frontend -> User/Browser
+
+  Example for "User signs up":
+    Browser sends {email, name, password}
+      -> Your /auth/signup endpoint receives it
+        -> You validate the data (is email valid? is password strong enough?)
+          -> You hash the password
+            -> You store it in the users table
+              -> You return {message: "User created"}
+                -> Browser shows success screen
+
+STEP 1.3 - Prototype In Pure Python First
+  Before touching FastAPI, write a plain Python script that:
+    - Connects to the database using psycopg2
+    - Inserts a dummy user
+    - Retrieves a dummy user
+    - Prints the result
+
+  This proves you understand the database connection.
+  Once this works, graduate to FastAPI.
+
+===========================================================
+PHASE 2: PROJECT STRUCTURE (ARCHITECTURE FIRST)
+===========================================================
+
+Your directory should look like this:
+
+~/campus_wari/backend/
+|
+|___ app/
+|    |___ __init__.py
+|    |___ main.py              (FastAPI app entry point)
+|    |___ database.py          (database connection, session)
+|    |___ models.py            (SQLAlchemy table definitions)
+|    |___ schemas.py           (Pydantic request/response shapes)
+|    |
+|    |___ routers/
+|    |    |___ __init__.py
+|    |    |___ users.py        (signup, login, profile endpoints)
+|    |    |___ listings.py     (create, browse, filter listings)
+|    |    |___ messages.py     (send, receive messages)
+|    |
+|    |___ utils/
+|         |___ __init__.py
+|         |___ auth.py         (hash passwords, create/verify JWT)
+|         |___ security.py     (middleware, protected routes)
+|
+|___ .env                      (database URL, secret keys - NEVER COMMIT)
+|___ .env.example              (template without real secrets)
+|___ requirements.txt          (all Python dependencies)
+|___ .gitignore
+
+WHY THIS STRUCTURE:
+  - Separation of concerns: each file has ONE job
+  - Routers are modular: easy to add new features
+  - Utils are reusable: auth logic used by multiple routers
+  - Easy to onboard new team members who know where to look
+
+===========================================================
+PHASE 3: BUILD IN THIS ORDER
+===========================================================
+
+CHECKPOINT 1 - "Hello World" API
+  - Create main.py with a single route: GET / that returns {"status": "alive"}
+  - Run with uvicorn
+  - Open browser, see the JSON response
+  - CELEBRATE. Your server is alive.
+
+CHECKPOINT 2 - Database Connection
+  - Write database.py that reads .env and creates a connection
+  - Call it from main.py on startup
+  - Print "Database connected" to console
+  - CELEBRATE. Your code talks to Postgres.
+
+CHECKPOINT 3 - User Signup (First Real Endpoint)
+  - POST /auth/signup takes {email, name, password}
+  - Validates input
+  - Hashes password
+  - Stores in users table
+  - Returns success
+
+CHECKPOINT 4 - User Login
+  - POST /auth/login takes {email, password}
+  - Finds user by email
+  - Verifies password hash
+  - Returns JWT token
+
+CHECKPOINT 5 - Protected Route
+  - GET /users/me requires valid JWT token
+  - Returns current user's profile
+  - If no token or invalid, returns 401 Unauthorized
+
+CHECKPOINT 6 - CRUD for Listings
+  - Create, Read, Update, Delete listings
+  - Filter by type (TUTORING, NOTES, COLLAB, HANGOUT)
+  - Each listing belongs to a user
+
+CHECKPOINT 7 - Messages
+  - Send message from one user to another
+  - Link message to a listing
+  - Retrieve conversation history
+
+===========================================================
+AI PROMPTS FOR LEARNING WHILE BUILDING
+===========================================================
+
+Use these prompts with ChatGPT, Claude, or any AI assistant.
+They are designed to teach you the CONCEPT, not just give code.
+
+PROMPT 1: Understanding FastAPI
+  "I'm building a project using FastAPI. Explain what FastAPI is,
+  how routing works, and how it handles requests and responses.
+  Use simple analogies. I'm a beginner with backend development."
+
+PROMPT 2: Database Connection
+  "I have a PostgreSQL database and I want to connect to it from
+  Python using psycopg2. Walk me through how to set up a connection
+  using environment variables from a .env file. Explain connection
+  pooling and why I should close connections. Don't write full code,
+  explain the concepts and let me try."
+
+PROMPT 3: Password Hashing
+  "Explain password hashing to me. Why do we hash passwords instead
+  of storing them as plain text? What is bcrypt? What is a salt?
+  How does verification work when a user logs in? Use simple language."
+
+PROMPT 4: JWT Authentication
+  "I need to implement JWT authentication in my FastAPI app.
+  Explain what a JWT token is, how it's created, how it's verified,
+  and what 'bearer token' means. Walk me through the flow:
+  user logs in -> gets token -> uses token for protected routes.
+  I want to understand the concept before I code."
+
+PROMPT 5: REST API Design
+  "I'm designing a REST API for a campus platform where students
+  can post listings (tutoring, notes sharing, collaborations).
+  Help me think through the endpoints I need. What HTTP methods
+  should I use? How should I structure my URLs? What status codes
+  should I return for different situations? Explain the reasoning."
+
+PROMPT 6: Debugging Help
+  "My FastAPI endpoint is returning a 500 error when I try to
+  insert a user into the database. Here is my error message:
+  [paste error]. Help me understand what this error means and
+  how to debug it step by step. I want to learn HOW to debug,
+  not just get the fix."
+
+PROMPT 7: Code Review
+  "Here is my FastAPI route for user signup. Can you review it
+  and tell me:
+  - What's good about it?
+  - What could be better?
+  - Any security concerns?
+  - Is there a cleaner way to structure this?
+  I want to improve my code quality, not just make it work.
+  [paste your code]"
+
+PROMPT 8: Learning SQL
+  "I need to write SQL queries for a campus platform. Teach me
+  how to write these specific queries:
+  - Find all active listings of type 'TUTORING'
+  - Find all listings by a specific user
+  - Find all messages between two users
+  - Count how many listings each user has posted
+  Explain each query in plain English so I understand the logic."
+
+===========================================================
+YOUR DELIVERABLES TO THE TEAM
+===========================================================
+
+By end of Week 1:
+  [ ] FastAPI app running and accessible
+  [ ] Database connection working
+  [ ] User signup endpoint working
+  [ ] User login endpoint working
+  [ ] API docs available at /docs (FastAPI auto-generates this)
+
+By end of Week 2:
+  [ ] All listing CRUD endpoints working
+  [ ] Message endpoints working
+  [ ] Protected routes with JWT authentication
+  [ ] Frontend person can call all endpoints with sample data
+
+===========================================================
+TIPS FROM SOMEONE WHO'S DONE THIS
+===========================================================
+
+1. USE FASTAPI'S BUILT-IN DOCS
+   When your server is running, go to http://localhost:8000/docs
+   FastAPI auto-generates interactive API documentation.
+   This is your best friend for testing endpoints.
+
+2. TEST WITH CURL OR POSTMAN BEFORE THE FRONTEND EXISTS
+   Don't wait for the frontend to test your API.
+   Use curl commands or Postman to send requests manually.
+
+3. COMMIT OFTEN, PUSH DAILY
+   Small commits with clear messages save you when things break.
+   "feat: add user signup endpoint" is better than "update code".
+
+4. ENVIRONMENT VARIABLES ARE NON-NEGOTIABLE
+   Never hardcode database URLs, secret keys, or passwords.
+   Always read from .env. Your .env file is NEVER committed.
+
+5. READ ERROR MESSAGES FULLY
+   FastAPI and Python have excellent error messages.
+   Read them. They tell you exactly what went wrong and where.
+
+6. ASK FOR HELP EARLY
+   Stuck for 30 minutes? Ask the team. Stuck for an hour?
+   Ask AI. Don't suffer in silence. We're all learning.
+
+===========================================================
+END OF BACKEND ROLE DOCUMENT
+===========================================================

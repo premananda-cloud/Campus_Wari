@@ -1,0 +1,332 @@
+===========================================================
+CAMPUS WARI - FRONTEND ROLE
+===========================================================
+Assigned to: [name-here]
+
+WHAT YOU OWN:
+  - Design and build every screen the user sees
+  - Create beautiful, intuitive interfaces
+  - Connect to the backend API to send and receive data
+  - Handle loading, errors, and empty states gracefully
+  - Make the app responsive (works on phone and laptop)
+  - Bring the project philosophy to life visually
+
+TOOLS:
+  - HTML5, CSS3, JavaScript (foundation)
+  - React (primary framework)
+  - Fetch API or Axios (for calling backend)
+  - Free to explore other tools (Tailwind CSS, shadcn, etc.)
+
+===========================================================
+MINDSET: YOU ARE THE FACE OF THE PROJECT
+===========================================================
+When someone asks "What does Campus Wari look like?"
+they're asking about YOUR work.
+
+The backend can be flawless. The database can be perfect.
+But if the interface is confusing or ugly, users leave.
+
+Your job is not just "make it work."
+Your job is to make it FEEL good.
+Every animation, every loading spinner, every error message —
+that's you saying "I care about the person using this."
+
+===========================================================
+PHASE 1: UNDERSTAND THE USERS AND THEIR JOURNEYS
+===========================================================
+
+STEP 1.1 - Who Are Our Users?
+  - Korou: wants to offer tutoring. Needs to post a listing quickly.
+  - Anjali: has old notes to share. Needs to upload or describe them.
+  - Thajaba: needs notes. Needs to browse and find them easily.
+  - Any student: wants to hang out. Needs to see who's around.
+
+STEP 1.2 - What Journeys Do They Take?
+
+  Journey A: First-Time User
+    Lands on site -> Sees what Campus Wari is -> Signs up ->
+    Sees empty feed with encouragement -> Creates first listing
+
+  Journey B: Returning User Looking For Help
+    Opens app -> Sees feed of listings -> Filters by subject ->
+    Finds a tutoring listing -> Messages the tutor -> Arranges meetup
+
+  Journey C: User With Something To Offer
+    Opens app -> Clicks "Create Listing" -> Fills form ->
+    Posts -> Sees their listing in the feed -> Gets a message
+
+STEP 1.3 - Draw These Journeys
+  On paper or Figma, sketch:
+    - What screen appears at each step?
+    - What does the user click?
+    - What data is shown?
+    - What happens if something fails?
+
+  This is called "user flow mapping." It saves you from
+  building screens nobody needs.
+
+===========================================================
+PHASE 2: DEFINE YOUR SCREENS (MINIMUM VIABLE)
+===========================================================
+
+SCREEN 1: Home / Landing Page
+  Purpose: Explain what Campus Wari is. Convince user to join.
+  Content:
+    - App name and tagline
+    - Brief description of what you can do
+    - "Get Started" button (leads to signup)
+    - "Already have an account? Log in" link
+  States: Default view only (static content)
+
+SCREEN 2: Signup Page
+  Purpose: Create a new account.
+  Content:
+    - Form fields: email, name, department, year, password, confirm password
+    - "Sign Up" button
+    - "Already have an account? Log in" link
+  States:
+    - Empty form (default)
+    - Validating (check email format, password match)
+    - Submitting (loading spinner on button)
+    - Success (redirect to feed)
+    - Error (show message: "Email already registered", "Password too short")
+
+SCREEN 3: Login Page
+  Purpose: Log into existing account.
+  Content:
+    - Form fields: email, password
+    - "Log In" button
+    - "Forgot password?" link (future feature)
+    - "Don't have an account? Sign up" link
+  States:
+    - Empty form (default)
+    - Submitting (loading spinner)
+    - Success (redirect to feed, store token)
+    - Error (show: "Invalid email or password")
+
+SCREEN 4: Main Feed
+  Purpose: Browse all active listings.
+  Content:
+    - Navigation bar (logo, profile icon, create button)
+    - Filter bar (by type: All, Tutoring, Notes, Collab, Hangout)
+    - List of listing cards (title, type badge, subject, posted by, time ago)
+    - "Create Listing" floating button or nav item
+  States:
+    - Loading (skeleton cards or spinner)
+    - Loaded with listings
+    - Empty ("No listings yet. Be the first to post!")
+    - Error ("Could not load listings. Try again.")
+
+SCREEN 5: Create Listing Page
+  Purpose: Post a new listing.
+  Content:
+    - Form fields: type (dropdown), title, subject, description
+    - "Post" button
+    - Cancel/back link
+  States:
+    - Empty form (default)
+    - Submitting (loading)
+    - Success (redirect to feed, show their new listing)
+    - Error ("Could not create listing. Try again.")
+
+SCREEN 6: Listing Detail Page
+  Purpose: View full details of a listing. Message the poster.
+  Content:
+    - Full listing info (title, type, subject, description, posted by, time)
+    - "Message" button (if not their own listing)
+    - If own listing: "Mark as Fulfilled" or "Delete" options
+  States:
+    - Loading
+    - Loaded
+    - Not found ("This listing no longer exists")
+
+SCREEN 7: Messages / Inbox
+  Purpose: View conversations with other users.
+  Content:
+    - List of conversations (who, about which listing, last message preview)
+    - Click into a conversation to see full chat
+    - Text input to send a new message
+  States:
+    - Loading
+    - Loaded with conversations
+    - Empty ("No messages yet. Browse listings to connect!")
+    - Inside a conversation: loading messages, sending message
+
+SCREEN 8: Profile Page
+  Purpose: View and edit own profile. See own listings.
+  Content:
+    - User info (name, email, department, year)
+    - "My Listings" section (active and fulfilled)
+    - "Logout" button
+  States: Loading, Loaded, Edit mode
+
+===========================================================
+PHASE 3: BUILD IN THIS ORDER
+===========================================================
+
+CHECKPOINT 1 - Static HTML/CSS Pages
+  Build all screens as static HTML files with CSS.
+  No JavaScript, no React, no API calls.
+  Just make them LOOK right.
+  Use dummy data to fill listings and messages.
+  Get the design approved by the team.
+
+CHECKPOINT 2 - React Setup
+  Convert your static pages into React components.
+  Set up:
+    - React project (Vite or Create React App)
+    - React Router for navigation between pages
+    - Component structure (reusable card, button, input components)
+
+CHECKPOINT 3 - Signup & Login (First API Connection)
+  Connect Signup and Login forms to the backend API.
+  On successful login: store the JWT token.
+  On successful signup: redirect to login or auto-login.
+  This is your FIRST real frontend-to-backend connection.
+  CELEBRATE. Data is flowing.
+
+CHECKPOINT 4 - Feed With Real Data
+  Fetch listings from GET /listings endpoint.
+  Display them as cards.
+  Implement type filter (call API with query params).
+  Handle loading and empty states.
+
+CHECKPOINT 5 - Create Listing
+  Connect Create Listing form to POST /listings endpoint.
+  Include the JWT token in the Authorization header.
+  On success, redirect to feed (and see the new listing appear).
+
+CHECKPOINT 6 - Messages
+  Fetch conversations. Display chat.
+  Send messages via POST /messages.
+  Poll for new messages or implement auto-refresh.
+
+CHECKPOINT 7 - Polish
+  Responsive design (test on phone width).
+  Smooth transitions between pages.
+  Better error messages.
+  Confirmation dialogs for destructive actions (delete listing).
+
+===========================================================
+AI PROMPTS FOR LEARNING WHILE BUILDING
+===========================================================
+
+PROMPT 1: Understanding React
+  "I'm starting a React project for a campus platform. Explain
+  React concepts to me like I'm a beginner: components, props,
+  state, and hooks (useState, useEffect). How do I think in
+  React? How is it different from plain HTML/JS? Use simple
+  analogies."
+
+PROMPT 2: React Router
+  "I need navigation in my React app with pages like Home,
+  Login, Feed, and Profile. Explain React Router to me.
+  How do I set up routes? How do I link between pages?
+  How do I protect routes that need authentication?
+  Walk me through the concepts."
+
+PROMPT 3: Calling APIs
+  "My backend team has built a REST API. I need to call it from
+  my React frontend. Explain how to use fetch (or Axios) to:
+  - Make GET requests to fetch listings
+  - Make POST requests to sign up and create listings
+  - Include JWT token in Authorization header
+  - Handle errors when the API is down or returns 401
+  Show me the patterns, not just the code."
+
+PROMPT 4: Handling Auth State
+  "After a user logs in, I get a JWT token. How do I manage
+  authentication state across my React app? Should I use Context?
+  Redux? Local state? Explain the options. How do I persist the
+  token so the user stays logged in when they refresh the page?"
+
+PROMPT 5: Loading and Error States
+  "My app currently only shows data when everything works perfectly.
+  Teach me how to handle:
+  - Loading states (spinners, skeleton screens)
+  - Empty states (when there's no data to show)
+  - Error states (when the API call fails)
+  - Edge cases (what if the user has no internet?)
+  I want my app to feel polished and thoughtful."
+
+PROMPT 6: Responsive Design
+  "I've built my pages for desktop. Now I need them to work on
+  mobile phones. Explain responsive design principles to me.
+  How do I use CSS media queries? What's the mobile-first
+  approach? What layout patterns work well for both screen sizes?"
+
+PROMPT 7: Forms and Validation
+  "I have signup and create-listing forms. Teach me how to:
+  - Validate input before submitting (email format, required fields)
+  - Show validation errors near the relevant field
+  - Disable the submit button while the request is in progress
+  - Handle server-side validation errors (e.g., 'Email already taken')
+  I want my forms to feel smooth and helpful, not frustrating."
+
+PROMPT 8: Component Design
+  "Here is a screenshot of my feed page design. Help me break it
+  down into reusable React components. What should be a separate
+  component? What should be in the same component? How do I decide
+  the right level of granularity? I want clean, maintainable code."
+
+PROMPT 9: Debugging Frontend
+  "My React app isn't behaving as expected. The data from the API
+  isn't showing up on the screen. Walk me through how to debug
+  this. What browser dev tools should I use? How do I check if
+  the API call succeeded? How do I inspect React state? Teach me
+  the debugging process."
+
+===========================================================
+YOUR DELIVERABLES TO THE TEAM
+===========================================================
+
+By end of Week 1:
+  [ ] Static HTML/CSS mockups of all major screens
+  [ ] Design approved by team
+  [ ] React project set up with routing
+  [ ] Components created for all screens (using dummy data)
+
+By end of Week 2:
+  [ ] Signup and Login connected to backend (real auth working)
+  [ ] Feed fetching and displaying real listings from API
+  [ ] JWT token stored and sent with requests
+  [ ] Protected routes working (redirect to login if not authenticated)
+
+By end of Week 3:
+  [ ] Create Listing form connected and working
+  [ ] Listing Detail page functional
+  [ ] Messages/Inbox screen functional
+  [ ] Profile page showing user info and their listings
+
+By end of Week 4:
+  [ ] Responsive design complete (mobile + desktop)
+  [ ] All loading, empty, and error states handled
+  [ ] Polish: transitions, confirmations, good error messages
+  [ ] Tested with real backend on another teammate's machine
+
+===========================================================
+TIPS FROM SOMEONE WHO'S DONE THIS
+===========================================================
+
+1. START STATIC, GO DYNAMIC
+   Build with hardcoded data first. Make it LOOK perfect.
+   Then swap in real API calls. Design and logic are
+   separate skills — don't debug both at once.
+
+2. COMMUNICATE WITH BACKEND CONSTANTLY
+   Ask: "What does the response look like for this endpoint?"
+   Ask: "What status codes do you return?"
+   Ask: "What does the request body need to include?"
+   Never guess the API contract. Agree on it together.
+
+3. THE FIRST API CALL IS THE HARDEST
+   Connecting frontend to backend for the first time
+   (CORS, headers, JSON formatting) is always fiddly.
+   Once the first call works, the rest get easier.
+
+4. HANDLE 401 GLOBALLY
+   If any API call returns 401, the token is expired or invalid.
+   Set up a global handler that redirects to login.
+   Don't handle it separately in every component.
+
+5. MOBILE FIRST, NOT MOBILE LAST
