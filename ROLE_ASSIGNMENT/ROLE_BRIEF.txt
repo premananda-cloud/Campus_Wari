@@ -1,4 +1,6 @@
-#Role need not limit you from learning .
+# LIke you will work closely with each other across multi role.
+# Role need not limit you from learning .
+
 ROLE : [Backend, Database, Auth, Frontend]
 1. Database : Create database and store environment variable in .env
 - makse schema and retrieval for user data. make logic to give relational data meaning and ensure usefulness to
