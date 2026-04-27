@@ -6,8 +6,6 @@ contains 'database', 'host', 'password', 'user'
 import os
 from dotenv import load_dotenv
 from dotenv import dotenv_values
-
-
 env_path = os.path.join('env', '.env')
 load_dotenv(env_path)
 
